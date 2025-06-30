@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>Csudapest RP Visszaszámláló</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(ellipse at bottom, #2a003f 0%, #0d001a 100%);
+      color: #e6ccff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: -20%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background: radial-gradient(circle at 30% 30%, rgba(204, 102, 255, 0.12), transparent 70%),
+                  radial-gradient(circle at 70% 70%, rgba(136, 66, 179, 0.15), transparent 70%);
+      animation: slowFog 60s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(40px);
+    }
+
+    @keyframes slowFog {
+      0% {
+        background-position: 0% 0%, 100% 100%;
+      }
+      100% {
+        background-position: 100% 100%, 0% 0%;
+      }
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 0 0 12px #cc66ff;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #ffffffbb;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      padding: 20px 40px;
+      background: rgba(50, 0, 70, 0.4);
+      border: 2px solid #cc66ff;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 0 20px #b84fff;
+      backdrop-filter: blur(10px);
+      user-select: none;
+    }
+
+    #progressContainer {
+      width: 100%;
+      max-width: 600px;
+      background: #300040;
+      border-radius: 0 0 15px 15px;
+      overflow: hidden;
+      border-top: none;
+      box-shadow: inset 0 0 10px #8a3ddb;
+    }
+
+    #progressBar {
+      height: 30px;
+      background: linear-gradient(270deg, #cc66ff, #b84fff, #cc66ff);
+      width: 0%;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 0 15px #d081ff;
+      animation: progressGradient 8s ease infinite;
+      transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes progressGradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    #progressBar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -40%;
+      width: 40%;
+      height: 6px;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shine 2.5s infinite;
+      border-radius: 15px 15px 0 0;
+    }
+
+    @keyframes shine {
+      0% {
+        left: -40%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    #progressText {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #ffffffaa;
+      user-select: none;
+    }
+
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #f5e6ff;
+      opacity: 0.7;
+      animation: twinkle 2.5s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.5);
+      }
+    }
+
+    .discord-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      box-shadow: 0 0 10px #b84fff;
+      transition: transform 0.2s ease;
+      user-select: none;
+    }
+
+    .discord-button:hover {
+      transform: scale(1.05);
+      background: #a66bbe;
+    }
+
+    #logo {
+      width: 150px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px #cc66ff);
+      user-select: none;
+    }
+
+    #csurint {
+      margin-top: 15px;
+      font-size: 1.3rem;
+      color: #ffe0ff;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    #csurintHelp {
+      font-size: 0.9rem;
+      color: #cc99ffcc;
+      margin-top: 3px;
+      user-select: none;
+    }
+
+    .info-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #b784ff;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 20px;
+      text-align: center;
+      cursor: default;
+      user-select: none;
+      position: relative;
+      box-shadow: 0 0 8px #d0aaff;
+    }
+
+    .info-icon:hover::after {
+      content: "Fél percenként kapsz 1 Csurintot! Beleülhetsz.";
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(204, 102, 255, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      box-shadow: 0 0 10px #b84fffcc;
+      pointer-events: none;
+      opacity: 1;
+      z-index: 10000;
+    }
+
+    .info-icon:hover::before {
+      content: "";
+      position: absolute;
+      bottom: 115%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(204, 102, 255, 0.9);
+      pointer-events: none;
+      opacity: 1;
+      z-index: 10001;
+    }
+
+    .csurint-popup {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%);
+      background: rgba(204, 102, 255, 0.85);
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #b84fffcc;
+      pointer-events: none;
+      opacity: 0;
+      animation: popupFadeSimple 2.5s ease forwards;
+      user-select: none;
+      z-index: 10000;
+    }
+
+    @keyframes popupFadeSimple {
+      0% {
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+  body {
+    padding: 15px;
+    height: auto; 
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  #countdown {
+    font-size: 1.4rem;
+    padding: 12px 20px;
+    border-radius: 12px 12px 0 0;
+  }
+  #progressContainer {
+    max-width: 100%;
+    border-radius: 0 0 12px 12px;
+  }
+  #progressBar {
+    height: 20px;
+    border-radius: 0 0 12px 12px;
+  }
+  #progressText {
+    font-size: 1rem;
+    margin-top: 8px;
+  }
+  #csurint {
+    font-size: 1rem;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  #csurintHelp {
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+  #logo {
+    width: 90px;
+    margin-bottom: 15px;
+  }
+  .discord-button {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
+}}
+
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+
+  <img id="logo" src="csuda.png" alt="Csudapest RP logó" />
+  <h1>Csudapest RP visszaszámláló</h1>
+  <p>Újranyitás: <strong>2025. július 1. 16:00</strong></p>
+  <div id="countdown">Betöltés...</div>
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
+  <div id="progressText"></div>
+
+  <div id="csurint">
+    Csurintjaid: <span id="csurintSzam">0</span>
+    <div class="info-icon" title="További info">?</div>
+  </div>
+
+  <a
+    class="discord-button"
+    href="https://discord.gg/cspreborn"
+    target="_blank"
+    rel="noopener noreferrer"
+    >Csatlakozz Discordhoz</a
+  >
+
+  <script>
+    const targetDate = new Date("2025-07-01T16:00:00");
+    const startDate = new Date("2025-06-29T00:00:00");
+    const countdownEl = document.getElementById("countdown");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const csurintEl = document.getElementById("csurintSzam");
+    const starsContainer = document.getElementById("stars");
+
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.animationDuration = (Math.random() * 2 + 1.5) + "s";
+      starsContainer.appendChild(star);
+    }
+
+    let csurint = 0;
+
+    const savedCsurint = localStorage.getItem("csurint");
+    if (savedCsurint !== null) {
+      csurint = parseInt(savedCsurint, 10);
+      csurintEl.textContent = csurint;
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+      const total = targetDate - startDate;
+
+      if (diff <= 0) {
+        countdownEl.innerHTML = "🎉 Csudapest RP újra megnyitott! 🎉";
+        progressBar.style.width = "100%";
+        progressText.innerHTML = "100% kész";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownEl.innerHTML = `${days} nap, ${hours} óra, ${minutes} perc, ${seconds} másodperc`;
+
+      const elapsed = now - startDate;
+      const percent = Math.min((elapsed / total) * 100, 100);
+      progressBar.style.width = percent + "%";
+      progressText.innerHTML = `Készenlét: ${percent.toFixed(1)}%`;
+    }
+
+    function showCsurintPopup() {
+      const popup = document.createElement("div");
+      popup.className = "csurint-popup";
+      popup.textContent = "+1 Csurint";
+      document.body.appendChild(popup);
+      setTimeout(() => {
+        popup.remove();
+      }, 2500);
+    }
+
+  
+    setInterval(() => {
+      csurint++;
+      csurintEl.textContent = csurint;
+      localStorage.setItem("csurint", csurint);
+      showCsurintPopup();
+    }, 30000);
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
